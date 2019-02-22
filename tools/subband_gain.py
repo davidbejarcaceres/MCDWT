@@ -43,10 +43,6 @@ image_black = image * 0
 
 # Black the images for every subband
 subprocess.run("mkdir -p {}gainCalc".format(args.path), shell=True) # locates the images before calculating the base
-cv2.imwrite("{}gainCalc/HL000.png".format(args.path), image_black.astype(np.uint16))
-cv2.imwrite("{}gainCalc/LH000.png".format(args.path), image_black.astype(np.uint16))
-cv2.imwrite("{}gainCalc/LL000.png".format(args.path), image_black.astype(np.uint16))
-cv2.imwrite("{}gainCalc/HH000.png".format(args.path), img_bandHH.astype(np.uint16))
 
 imagesList = [image_black, image_black, image_black, img_bandHH]
 for i in range(len(bands)):
@@ -87,13 +83,3 @@ for band in bands:
     base = cv2.imread((args.path+"gainCalc/uses{}/000.png".format(band)), -1)
     gain = calc_energy(img_reconstructed)/ calc_energy(base)
     print("Total gain with subband {}:  {}".format(band ,gain))
-
-# !DWT to reconstruct to create the base
-subprocess.run("python3 -O ../src/DWT.py -i {} -p {} -b".format(args.i, args.path+"gainCalc/"), shell=True, check=True)
-subprocess.run("python3 -O ../src/DWT.py -i {} -p {} -b".format(args.i, args.path), shell=True, check=True)
-# Reads the two images
-base = cv2.imread((args.path+"gainCalc/"+"000.png"), -1) 
-
-# Calculates the gain
-gain = calc_energy(img_reconstructed)/ calc_energy(base)
-print("Total gain:  {}".format(gain))

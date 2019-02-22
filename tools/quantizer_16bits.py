@@ -24,13 +24,12 @@ from PIL import Image
 parser = argparse.ArgumentParser("Calculates gain of an image calculating energies\nMore info: https://docs.opencv.org/3.1.0/d1/d5c/tutorial_py_kmeans_opencv.html")
 parser.add_argument("-i", help="Input image: /tmp/HH000.png", default = "/tmp/HH000.png")
 parser.add_argument("-o", help="Output image: /tmp/quantized.png", default = "/tmp/quantized.png")
-parser.add_argument("-step", "--step", help="Quantization steps", default = 8, type = int)
+parser.add_argument("-step", "--step", help="Quantization steps", default = 16, type = int)
 parser.add_argument("-kmeans", "--kmeans", help="Activates the advanced quantizer with Kmeans (+CPU ussage)\Sometimes better results using less steps, better for sub-bands", action='store_true')                                
 
 args = parser.parse_args() # Parses all the arguments
 K = args.step
-subprocess.run("python3 -O substract_offset.py -i {} -o /tmp/normalized.png".format(args.i), shell=True, check=True)
-
+subprocess.run("python -O substract_offset.py -i {} -o /tmp/normalized.png".format(args.i), shell=True, check=True)
 
 if(args.kmeans):
     print("Using Kmeans ...")
@@ -57,17 +56,22 @@ if(args.kmeans):
     cv2.imwrite(("/tmp/quantizedKmeans_K{}.png".format(K)), res2.astype(np.uint16)) # Saves the image to tmp indicating the number of steps
 else:
     print("Default method...")
+
     img = cv2.imread("/tmp/normalized.png")
-    img += 128
-    cv2.imwrite("/tmp/normalized.png", img)
+    #img += 128
+    #cv2.imwrite("/tmp/normalized.png", img)
     # Light quantizer not using any improvement
     imgTest = Image.open("/tmp/normalized.png")
     im2Test = imgTest.quantize(K)
     im2Test.show()
+    im2Test.save("/tmp/quantized_K{}.png".format(K),"PNG")
 
     imgOriginal = cv2.imread("/tmp/normalized.png")
     cv2.imshow('Original Image',imgOriginal)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    im2Test.save("/tmp/quantized_K{}.png".format(K),"PNG")
+
+    # Reverts to 16 bits images to work with MCDWT project REPLACING THE ORIGINAL IMAGE
+    #subprocess.run("python3 -O add_offset.py -i {} -o {}".format(args.i, args.i), shell=True, check=True)
+
 
