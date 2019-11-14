@@ -2,7 +2,10 @@
 
 import numpy as np
 import sys
-
+import os
+projectPathOS = sys.path[0].replace("/tools", "") if sys.platform == "linux" else sys.path[0].replace("\\tools", "")
+sys.path.append(projectPathOS)
+sys.path.append(os.getcwd())
 from DWT import DWT
 sys.path.insert(0, "..")
 from src.IO import decomposition
