@@ -11,6 +11,8 @@ import os
 projectPathOS = sys.path[0].replace("/tools", "") if sys.platform == "linux" else sys.path[0].replace("\\tools", "")
 sys.path.append(projectPathOS)
 sys.path.append(os.getcwd())
+import tempfile
+tempDir = tempfile.gettempdir()
 from DWT import DWT
 sys.path.insert(0, "..")
 from src.IO import image
@@ -21,7 +23,7 @@ class MDWT:
     def __init__(self):
         self.dwt = DWT()
 
-    def forward(self, prefix="/tmp/", N=5):
+    def forward(self, prefix=tempDir, N=5):
         '''Motion 1-iteration forward 2D DWT of a sequence of images.
 
         Compute the forward 2D-DWT of each image of the sequence
@@ -44,7 +46,7 @@ class MDWT:
             pyr = self.dwt.forward(img)
             decomposition.write(pyr, prefix, "{:03d}".format(i))
 
-    def backward(self, prefix="/tmp/", N=5):
+    def backward(self, prefix=tempDir, N=5):
         '''Motion 1-iteration forward 2D DWT of a sequence of decompositions.
 
         Compute the inverse 2D-DWT of each decomposition of the
@@ -84,7 +86,7 @@ if __name__ == "__main__":
         formatter_class=CustomFormatter)
 
     parser.add_argument("-b", "--backward", action='store_true', help="Performs backward transform")
-    parser.add_argument("-p", "--prefix", help="Dir where the files the I/O files are placed", default="/tmp/")
+    parser.add_argument("-p", "--prefix", help="Dir where the files the I/O files are placed", default=tempDir)
     parser.add_argument("-N", help="Number of images/decompositions", default=5, type=int)
 
     args = parser.parse_args()

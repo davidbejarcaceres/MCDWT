@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 import os
+import tempfile
+tempDir = tempfile.gettempdir()
 if __debug__:
     import time
 
@@ -10,7 +12,7 @@ class InputFileException(Exception):
 def normalize(x):
     return ((x - np.amin(x)) / (np.amax(x) - np.amin(x)))
 
-def readL(prefix = "/tmp/", index = "000"):
+def readL(prefix = tempDir, index = "000"):
     '''Read a 3-components LL-subband from disk. Each component stores
        integers between [0, 65535].
 
@@ -49,7 +51,7 @@ def readL(prefix = "/tmp/", index = "000"):
 
     return LL
 
-def readH(prefix = "/tmp/", index = "000"):
+def readH(prefix = tempDir, index = "000"):
     fn = prefix + "LH" + index + ".png"
     LH = cv2.imread(fn, -1)
     if LH is None:
@@ -98,7 +100,7 @@ def readH(prefix = "/tmp/", index = "000"):
 
     return LH, HL, HH
 
-def read(prefix = "/tmp/", index = "000"):
+def read(prefix = tempDir, index = "000"):
     '''Read a decomposition from disk. The coefficients must be in the range [0, 65535].
 
     Parameters
@@ -123,7 +125,7 @@ def read(prefix = "/tmp/", index = "000"):
     LH, HL, HH = readH(prefix, index)
     return (LL, (LH, HL, HH))
 
-def writeL(LL, prefix = "/tmp/", index = "000"):
+def writeL(LL, prefix = tempDir, index = "000"):
     '''Write a LL-subband to disk.
 
     Parameters
@@ -158,7 +160,7 @@ def writeL(LL, prefix = "/tmp/", index = "000"):
         while cv2.waitKey(1) & 0xFF != ord('q'):
             time.sleep(0.1)
 
-def writeH(H, prefix = "/tmp/", index = "000"):
+def writeH(H, prefix = tempDir, index = "000"):
     '''Write the high-frequency subbands H=(LH, HL, HH) to the disk.
 
     Parameters
@@ -208,7 +210,7 @@ def writeH(H, prefix = "/tmp/", index = "000"):
         while cv2.waitKey(1) & 0xFF != ord('q'):
             time.sleep(0.1)
 
-def write(decomposition, prefix = "/tmp/", index = "000"):
+def write(decomposition, prefix = tempDir, index = "000"):
     '''Write a decomposition to disk.
 
     Parameters
@@ -239,7 +241,7 @@ if __name__ == "__main__":
     os.system("cp ../../sequences/stockholm/001.png /tmp/LH000.png")
     os.system("cp ../../sequences/stockholm/002.png /tmp/HL000.png")
     os.system("cp ../../sequences/stockholm/003.png /tmp/HH000.png")
-    pyr = read("/tmp/", "000")
+    pyr = read(tempDir, "000")
     os.system("rm -rf /tmp/out/") # Use Python's call, not system's call
     os.mkdir("/tmp/out/")
     write(pyr, "/tmp/out/", "000")

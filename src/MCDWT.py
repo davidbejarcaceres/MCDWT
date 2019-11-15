@@ -6,6 +6,8 @@ import os
 projectPathOS = sys.path[0].replace("/tools", "") if sys.platform == "linux" else sys.path[0].replace("\\tools", "")
 sys.path.append(projectPathOS)
 sys.path.append(os.getcwd())
+import tempfile
+tempDir = tempfile.gettempdir()
 from DWT import DWT
 sys.path.insert(0, "..")
 from src.IO import decomposition
@@ -56,7 +58,7 @@ class MCDWT:
         bH = self.dwt.forward(BH)
         return bH[1]
 
-    def forward(self, prefix = "/tmp/", N=5, T=2):
+    def forward(self, prefix = tempDir, N=5, T=2):
         '''A Motion Compensated Discrete Wavelet Transform.
 
         Compute the MC 1D-DWT. The input video (as a sequence of
@@ -117,7 +119,7 @@ class MCDWT:
                 i += 1
             x *= 2
 
-    def backward(self, prefix = "/tmp/", N=5, T=2):
+    def backward(self, prefix = tempDir, N=5, T=2):
         x = 2**T
         for t in range(T): # Temporal scale
             i = 0
@@ -150,7 +152,7 @@ if __name__ == "__main__":
         formatter_class=CustomFormatter)
 
     parser.add_argument("-b", "--backward", action='store_true', help="Performs backward transform")
-    parser.add_argument("-p", "--prefix", help="Dir where the files the I/O files are placed", default="/tmp/")
+    parser.add_argument("-p", "--prefix", help="Dir where the files the I/O files are placed", default=tempDir)
     parser.add_argument("-N", help="Number of decompositions", default=5, type=int)
     parser.add_argument("-T", help="Number of temporal levels", default=2, type=int)
     parser.add_argument("-P", help="Predictor to use (1=average, 2=weighted_average)", default=1, type=int)

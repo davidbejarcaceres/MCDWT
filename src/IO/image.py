@@ -1,11 +1,13 @@
 import cv2
 import numpy as np
 import os
+import tempfile
+tempDir = tempfile.gettempdir()
 
 class InputFileException(Exception):
     pass
 
-def read(prefix = "/tmp/", index = "000"):
+def read(prefix = tempDir, index = "000"):
     '''Read a 3-components image from disk. Each component stores
        integers between [0, 65535].
 
@@ -36,7 +38,7 @@ def read(prefix = "/tmp/", index = "000"):
     buf -= 32768.0
     return buf.astype(np.int16)
 
-def write(image, prefix = "/tmp/", index = "000"):
+def write(image, prefix = tempDir, index = "000"):
     '''Write a 3-components image to disk. Each component stores integers
        between [0, 65536].
 
@@ -69,6 +71,6 @@ def write(image, prefix = "/tmp/", index = "000"):
 
 if __name__ == "__main__":
 
-    img = read("/tmp/", "000")
-    write(img, "/tmp/", "000")
+    img = read(tempDir, "000")
+    write(img, tempDir, "000")
     print("IO::image:__main__: generated /tmp/000.png")

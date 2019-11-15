@@ -2,23 +2,30 @@
 
 import numpy as np
 import sys
-
+import tempfile
+tempDir = tempfile.gettempdir()
 from DWT import DWT
 sys.path.insert(0, "..")
-from src.IO import decomposition
+from IO import decomposition
+import os
+from MDWT import MDWT
+
 
 class MCDWT:
 
-    def forward(self, prefix = "/tmp/", N=5, T=2; K=2):
+    def forward(self, prefix = tempDir, N=5, T=2, K=2):
         _2d_transform = MDWT()
+        #_2d_level = "LL" + os.path.sep
+        _2d_level = ""
         for k in range(K):
             _2d_transform.forward(prefix, N)
             tmp = decomposition.readL(prefix, "000")
-            t_transform = MCDWT(tmp.shape) # t_transform = SMCTF(tmp.shape)
+            # t_transform = MCDWT(tmp.shape) # t_transform = SMCTF(tmp.shape)
+            t_transform = MCDWT() # t_transform = SMCTF(tmp.shape)
             t_transform.forward(prefix + _2d_level, N, T)
             _2d_level += "LL"
 
-    def backward(self, prefix = "/tmp/", N=5, T=2, K=2):
+    def backward(self, prefix = tempDir, N=5, T=2, K=2):
         _2d_transform = MDWT()
         _2d_level = "LL"*K
         for k in range(K):
@@ -47,7 +54,7 @@ if __name__ == "__main__":
         formatter_class=CustomFormatter)
 
     parser.add_argument("-b", "--backward", action='store_true', help="Performs backward transform")
-    parser.add_argument("-p", "--prefix", help="Dir where the files the I/O files are placed", default="/tmp/")
+    parser.add_argument("-p", "--prefix", help="Dir where the files the I/O files are placed", default=tempDir+os.path.sep+"stockholm"+os.path.sep)
     parser.add_argument("-N", help="Number of decompositions", default=5, type=int)
     parser.add_argument("-T", help="Number of temporal levels", default=2, type=int)
     parser.add_argument("-K", help="Number of spatial levels", default=2, type=int)
@@ -72,7 +79,13 @@ if __name__ == "__main__":
         if __debug__:
             print("Forward transform")
 
-        p = decomposition.readL(args.prefix, "000")
-        d = MCDWT(p.shape)
 
+        p = decomposition.readL(args.prefix + os.path.sep, "000")
+        d = MCDWT()
         p = d.forward(args.prefix, args.N, args.T)
+
+        # d = MDWT()
+        # p = d.forward(args.prefix, args.N)
+        # p = decomposition.readL("{}".format(args.prefix))
+        # mcdwt = MCDWT()
+        # p = mcdwt.forward(args.prefix, args.N, args.T)

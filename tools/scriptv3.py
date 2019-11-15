@@ -37,6 +37,7 @@ import shutil
 import add_offset_module as add_offset
 import substract_offset_module as substract_offset
 
+
 def main():
     # Creates the command line arguments
     parser = argparse.ArgumentParser("Script for Issue Week 2")
@@ -98,19 +99,10 @@ def main():
 
     if transform == "True":
         # Creates directories for the generated files
-        # subprocess.run("mkdir /tmp/{}".format(videoName), shell=True) # root directory
         os.makedirs(os.path.join(tempPath, videoName), 755, 1)
-        # subprocess.run("mkdir -p /tmp/{}/extracted".format(videoName), shell=True) # extracted frames from video
         os.makedirs(os.path.join(tempPath, videoName, "extracted"), 755, 1)
-        # subprocess.run("mkdir -p /tmp/{}/16bit".format(videoName), shell=True) # for the 16 bit transformed images
         os.makedirs(os.path.join(tempPath, videoName, "16bit"), 755, 1)
-        # subprocess.run("mkdir -p /tmp/{}/reconstructed".format(videoName), shell=True) # for the reconstructed 16 bit original images
         os.makedirs(os.path.join(tempPath, videoName, "reconstructed"), 755, 1)
-        # subprocess.run("mkdir -p /tmp/{}/MDWT".format(videoName), shell=True) # images after MDWT
-        # subprocess.run("mkdir -p /tmp/{}/MDWT/MCDWT".format(videoName), shell=True) # images after MCDWT
-        # subprocess.run("mkdir -p /tmp/{}/MDWT/MCDWT/1".format(videoName), shell=True) # images after MCDWT
-        # subprocess.run("mkdir -p /tmp/{}/_reconMCDWT".format(videoName), shell=True) # Recons backwards from MCDWT
-        # subprocess.run("mkdir -p /tmp/{}/_reconMDWT".format(videoName), shell=True) # Reconstruct backwards from MCWT
 
 
 
@@ -127,22 +119,16 @@ def main():
 
         # Working with local video
         if localVideo:
-            # subprocess.run("mv {} /tmp/{}/{}.mp4".format(videoPath,videoName, videoName), shell=True, check=True)
             shutil.copyfile(videoPath, os.path.join(tempPath, videoName, videoName+".mp4")) 
 
         # Extracts the frames from video
         print("\n\nExtracting images ...\n\n")
-        # subprocess.run("ffmpeg -i /tmp/{}/{}.mp4 -vframes {} /tmp/{}/extracted/{}_%03d.png".format(videoName, videoName,  nFrames,videoName,  videoName), shell=True, check=True)
         subprocess.run("ffmpeg -i {} -vframes {} {}_%03d.png".format(os.path.join(tempPath,videoName,videoName+".mp4"),  nFrames, os.path.join(tempPath,videoName,"extracted", videoName)), shell=True, check=True)
-
 
         # Convert the images to 16 bit
         for image in range(int(nFrames)):
-            #inputImg = ("/tmp/{}/extracted/{}_{:03d}.png".format(videoName, videoName ,image+1))
             inputImg = ("{}_{:03d}.png".format( os.path.join(tempPath, videoName, "extracted", videoName) ,image+1))
-            # outputImg = ("/tmp/{}/16bit/{:03d}.png".format(videoName, image))
             outputImg = ("{}{:03d}.png".format( os.path.join(tempPath, videoName, "16bit") + os.path.sep ,image))
-            # subprocess.run("python3 add_offset.py -i {} -o {}".format(inputImg, outputImg), shell=True, check=True)
             add_offset.add_offset(inputImg, outputImg);
 
         # delete extensions from 16 bit images
@@ -154,13 +140,11 @@ def main():
 
         ########## MDWT Transform #################
         # Motion 2D 1-levels forward DWT of the frames from the video:
-        # subprocess.run("python3  ../src/MDWT.py -p /tmp/{}/16bit/  -N {}".format(videoName, nFrames), shell=True, check=True)
         subprocess.run("{}  {}MDWT.py -p {}  -N {}".format(pythonversion3OS,os.path.join(projectPathOS, "src") + os.path.sep, os.path.join(tempPath, videoName, "16bit") + os.path.sep, nFrames), shell=True, check=True)
         print("\nFirst transform MDWT done!")
 
         ########## MCDWT Transform #################
         # Motion Compensated 1D 1-levels forward MCDWT:
-        # subprocess.run("{python3} -O ../src/MCDWT.py -p /tmp/{}/16bit/ -N {} -T {}".format(os.path.join(tempPath, videoName, "16bit") + os.path.sep, nFrames, t_scale), shell=True, check=True)
         subprocess.run("{}  {} -p {}  -N {} -T {}".format(pythonversion3OS ,os.path.join(projectPathOS, "src") + os.path.sep + "MCDWT.py", os.path.join(tempPath, videoName, "16bit") + os.path.sep, nFrames, t_scale), shell=True, check=True)
         print("\nTransform MCDWT done!")
 
@@ -169,15 +153,12 @@ def main():
         # Support for multi-level forwards MCDWT
         if nLevel > 1:
             print("\nWorking on multi-level MCDWT...")
-            # mlevelpath = "/tmp/{}/MDWT/MCDWT/".format(videoName)
             mlevelpath = os.path.join(tempPath, videoName, "MDWT", "MCDWT") + os.path.sep
             for i in range(nLevel-1):
-                print("Nivel {}".format(i+2))
-                newLevel = ("{}{}{}".format(mlevelpath, os.path.sep, str(i+2)))
-                # subprocess.run("mkdir -p {}".format(newLevel), shell=True) # creates next level MCDWT dir
+                print(f"Nivel {i+2}")
+                newLevel = (f"{mlevelpath}{os.path.sep}{str(i+2)}")
                 os.makedirs(newLevel, 755, 1)
                 # Works on the last MCDWT and transform to the new level
-                # subprocess.run("python -O ../src/MCDWT.py -d {}{}/ -m {}{}/ -N {} -T {}".format(mlevelpath, i+1 , mlevelpath, i+2 , nFrames, t_scale), shell=True, check=True)
                 subprocess.run("{}  -O {} -d {}{} -m {}{} -N {} -T {}".format(pythonversion3OS, os.path.join(projectPathOS, "src") + os.path.sep + "MCDWT.py", mlevelpath, i+1 + os.path.sep, mlevelpath, i+2 + os.path.sep, nFrames, t_scale), shell=True, check=True)
 
 
@@ -188,15 +169,11 @@ def main():
         # Support for multi-level backwards reconstruction MCDWT
         if nLevel > 1:
             print("\nReconstructing multi-level MCDWT...")
-            # mlevelMCDWT = "/tmp/{}/MDWT/MCDWT/".format(videoName)
             mlevelMCDWT = os.path.join(tempPath, videoName, "MDWT", "MCDWT") + os.path.sep
-            # mlevelrecons = ("/tmp/{}/_reconMCDWT/".format(videoName))
             mlevelrecons = os.path.join(tempPath, videoName, "_reconMCDWT") + os.path.sep
             for i in reversed(range(nLevel-1)):
-                # subprocess.run("mkdir -p {}{}".format(mlevelrecons, i+1 ), shell=True) # creates next level MCDWT dir
                 os.makedirs("{}{}".format(mlevelrecons, i+1),755, 1) # creates next level MCDWT dir
                 # Reconstructs form the last MCDWT level
-                # subprocess.run("python -O ../src/MCDWT.py -b -m {}{}/ -d {}{}/ -N {} -T {}".format(mlevelMCDWT, i+2 , mlevelrecons, i+1, nFrames-1, t_scale), shell=True, check=True)
                 subprocess.run("{}  -O {} -b -m {}{}  -d {}{}  -N {} -T {}".format(pythonversion3OS, os.path.join(projectPathOS, "src") + os.path.sep + "MCDWT.py",     mlevelMCDWT, i+2 + os.path.sep,    mlevelrecons   , i+1 + os.path.sep    , nFrames-1, t_scale), shell=True, check=True)
                 print("Reconstructed from MCDWT level {} done!".format(i+2))
 
@@ -204,23 +181,17 @@ def main():
         else:
             # Reconstructs form the last MCDWT level
                 print("\nReconstructed from level MCDWT")
-        # subprocess.run("{python3} -O ../src/MCDWT.py -p /tmp/{}/16bit/ -b -N {} -T {}".format(videoName, nFrames, t_scale), shell=True, check=True)
         subprocess.run("{}  {} -p {}  -N {} -T {}".format(pythonversion3OS, os.path.join(projectPathOS, "src") + os.path.sep + "MCDWT.py", os.path.join(tempPath, videoName, "16bit") + os.path.sep, nFrames, t_scale), shell=True, check=True)
 
         # Motion 2D 1-levels backward DWT:
-        # subprocess.run("{python3}  {../src/MDWT.py} -p /tmp/{}/16bit/ -b  -N {}".format(videoName, nFrames), shell=True, check=True)
         subprocess.run("{}  {} -p {} -b  -N {}".format(pythonversion3OS ,os.path.join(projectPathOS, "src") + os.path.sep + "MCDWT.py", os.path.join(tempPath, videoName, "16bit") + os.path.sep, nFrames), shell=True, check=True)
         print("\nReconstructed from MDWT done!")
-        # print("\nCheck reconstructed sequence in: /tmp/{}/_reconMDWTcon".format(videoName))
         print("\nCheck reconstructed sequence in: {}/_reconMDWTcon".format(tempPath))
 
         # Reconstruct 16bit original images back to normal
         for image in range(int(nFrames)):
-            # inputImg = ("/tmp/{}/16bit/{:03d}.png".format(videoName, image))
             inputImg = ("{}{:03d}.png".format(os.path.join(tempPath, videoName, "16bit") + os.path.sep ,image))
-            # outputImg = ("/tmp/{}/reconstructed/{:03d}.png".format(videoName ,image))
             outputImg = ("{}{:03d}.png".format(os.path.join(tempPath, videoName, "reconstructed") + os.path.sep ,image))
-            # subprocess.run("{python3} substract_offset.py -i {} -o {}".format(inputImg, outputImg), shell=True, check=True)
             substract_offset.substract_offset(inputImg, outputImg);
 
     print("Check results on {} folder".format(os.path.join(tempPath, videoName)))
