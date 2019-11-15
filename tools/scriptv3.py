@@ -29,6 +29,7 @@ projectPathOS = sys.path[0].replace("/tools", "") if sys.platform == "linux" els
 sys.path.append(projectPathOS)
 sys.path.insert(0, "..")
 pythonversion3OS = "python3" if sys.platform == "linux" else "python"
+tempPath = tempfile.gettempdir()
 import src.DWT
 import src.IO
 import src.MC
@@ -44,19 +45,17 @@ def main():
     parser.add_argument("-vpath", help="Path to the local video, with .mp4 extension")
     parser.add_argument("-vurl", help="URL to the video to download")
     parser.add_argument("-level", help="Number of spatial resolutions (levels in the Laplacian Pyramid)" ,default=1)
-    parser.add_argument("-frames", help="Number of frames to extract from video to transform")
-    parser.add_argument("-T", help="Number of levels of the MCDWT (temporal scales)")
+    parser.add_argument("-frames", help="Number of frames to extract from video to transform", default=5)
+    parser.add_argument("-T", help="Number of levels of the MCDWT (temporal scales)", default=2)
     parser.add_argument("-vname", help="Name of the folder and video to export in tmp folder")
-    parser.add_argument("-transform", help="True direct transform / False to reconstruct", default="True")
+    parser.add_argument("-b", "--backward", action='store_true', help="Performs backward transform")
+
 
     # Parses all the arguments
     args = parser.parse_args()
 
     # URL to the video
-    if args.vurl != None:
-        videoURL = args.vurl
-    else:
-        videoURL = "http://www.hpca.ual.es/~vruiz/videos/un_heliostato.mp4"
+    videoURL = args.vurl if(args.vurl != None) else "http://www.hpca.ual.es/~vruiz/videos/un_heliostato.mp4"
 
     # Path to the video in local
     if args.vpath != None:
@@ -66,45 +65,23 @@ def main():
         localVideo = False
 
     # Name of the video
-    if args.vname != None:
-        videoName = args.vname
-    else:
-        videoName = "video_transformed"
+    videoName = args.vname if(args.vname != None) else "video_transformed"
 
     # Number of frames to be extracted
-    if args.frames != None:
-        nFrames = int(args.frames)
-    else:
-        nFrames = 5
+    nFrames = int(args.frames) if(args.frames != None) else 5
 
     # Number of T
-    if args.T != None:
-        t_scale = int(args.T)
-    else:
-        t_scale = 2
+    t_scale = int(args.T) if(args.T != None) else 2
 
     # Number of levels for the Laplacian Pyramid
-    if args.level != None:
-        nLevel = int(args.level)
-    else:
-        nLevel = 1
+    nLevel = int(args.level) if(args.level != None) else 1
 
-    # Check the flag to direct transform
-    if args.transform != None:
-        transform = str(args.transform)
-    else:
-        transform = str(True)
-
-    tempPath = tempfile.gettempdir()
-
-    if transform == "True":
+    if not args.backward:
         # Creates directories for the generated files
         os.makedirs(os.path.join(tempPath, videoName), 755, 1)
         os.makedirs(os.path.join(tempPath, videoName, "extracted"), 755, 1)
         os.makedirs(os.path.join(tempPath, videoName, "16bit"), 755, 1)
         os.makedirs(os.path.join(tempPath, videoName, "reconstructed"), 755, 1)
-
-
 
         # Working with videos from the web
         if localVideo != True:
@@ -164,7 +141,7 @@ def main():
 
             print("Last level of MCDWT located in:  {}".format(newLevel))
 
-    if transform == "False":
+    if args.backward:
         ######## Reconstruction #########
         # Support for multi-level backwards reconstruction MCDWT
         if nLevel > 1:

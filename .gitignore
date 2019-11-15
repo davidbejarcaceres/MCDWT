@@ -2,3 +2,11 @@
 .vscode/settings.json
 *.pyc
 .vscode/settings.json
+tools/__pycache__/add_offset_module.cpython-37.pyc
+src/IO/__pycache__/__init__.cpython-37.pyc
+src/IO/__pycache__/decomposition.cpython-37.pyc
+src/IO/__pycache__/image.cpython-37.pyc
+src/MC/__pycache__/__init__.cpython-37.pyc
+src/__pycache__/DWT.cpython-37.pyc
+tools/__pycache__/add_offset_module.cpython-37.pyc
+tools/__pycache__/substract_offset_module.cpython-37.pyc
