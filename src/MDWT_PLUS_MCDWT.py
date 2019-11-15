@@ -18,7 +18,8 @@ import os
 projectPathOS = sys.path[0].replace("/tools", "") if sys.platform == "linux" else sys.path[0].replace("\\tools", "")
 sys.path.append(projectPathOS)
 sys.path.append(os.getcwd())
-
+import tempfile
+tempDir = tempfile.gettempdir()
 from MDWT import MDWT
 from MCDWT import MCDWT
 sys.path.insert(0, "..")
@@ -41,16 +42,16 @@ if __name__ == "__main__":
         formatter_class=CustomFormatter)
 
     parser.add_argument("-i", "--images",
-                        help="Sequence of images", default="/tmp/stockholm/")
+                        help="Sequence of images", default=f"{tempDir + os.path.sep}stockholm{os.path.sep}")
 
     parser.add_argument("-d", "--decompositions",
-                        help="Sequence of decompositions", default="/tmp/stockholm_")
+                        help="Sequence of decompositions", default=f"{tempDir + os.path.sep}stockholm_{os.path.sep}")
 
     parser.add_argument("-N",
                         help="Number of images/decompositions", default=5, type=int)
 
     parser.add_argument("-m", "--mc_decompositions",
-                        help="Sequence of motion compensated decompositions", default="/tmp/mc_stockholm_")
+                        help="Sequence of motion compensated decompositions", default=f"{tempDir + os.path.sep}mc_stockholm_")
 
     parser.add_argument("-T",
                         help="Number of temporal levels", default=2, type=int)
@@ -65,10 +66,12 @@ if __name__ == "__main__":
     for i in range(args.K):
         '''MDWT Transform'''
         d = MDWT()
-        p = d.forward(args.images, args.decompositions, args.N)
+        # p = d.forward(args.images, args.decompositions, args.N)
+        p = d.forward(args.images, args.N)
 
         '''MCDWT Transform'''
-        p = decomposition.readL("{}000".format(args.decompositions))
+        # p = decomposition.readL("{}000".format(args.decompositions))
+        p = decomposition.readL("{}".format(args.images))
         d = MCDWT(p.shape)
         p = d.forward(args.decompositions, args.decompositions, args.N, args.T)
 
