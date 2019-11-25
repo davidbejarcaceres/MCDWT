@@ -9,30 +9,38 @@
   tasks:
    - name: Installing numpy
      pip:
-      name: numpy
+      name:
+        - numpy
+        - ipdb
+        - opencv-python
+        - PyWavelets
+        - matplotlib
+        - tensorflow-gpu
+        - tensorflow-datasets
+      extra_args: --user
 
-   - name: Installing PyWavelets
-     pip:
-      name: PyWavelets
+  #  - name: Installing PyWavelets
+  #    pip:
+  #     name: PyWavelets
 
-   - name: Installing ipdb
-     pip:
-      name: ipdb
+  #  - name: Installing ipdb
+  #    pip:
+  #     name: ipdb
 
-   - name: Installing OpenCV Python
-     pip:
-      name: opencv-python
+  #  - name: Installing OpenCV Python
+  #    pip:
+  #     name: opencv-python
 
-   - name: Installing Tensorflow 2 GPU
-     pip:
-      name: tensorflow-gpu
+  #  - name: Installing Tensorflow 2 GPU
+  #    pip:
+  #     name: tensorflow-gpu
 
-   - name: Installing Matplotlib
-     pip:
-      name: matplotlib
+  #  - name: Installing Matplotlib
+  #    pip:
+  #     name: matplotlib
 
-   - name: Installing tensorflow-datasets
-     pip:
-      name: tensorflow-datasets
+  #  - name: Installing tensorflow-datasets
+  #    pip:
+  #     name: tensorflow-datasets
 
       
