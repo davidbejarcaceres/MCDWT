@@ -27,6 +27,12 @@
      pip:
       name: tensorflow-gpu
 
+   - name: Installing Matplotlib
+     pip:
+      name: matplotlib
 
+   - name: Installing tensorflow-datasets
+     pip:
+      name: tensorflow-datasets
 
       
