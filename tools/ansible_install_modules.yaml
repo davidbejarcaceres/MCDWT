@@ -9,17 +9,18 @@
   tasks:
    - name: Installing numpy
      pip:
-      name:
-        - numpy
+      name: numpy
       extra_args: --user
 
    - name: Installing PyWavelets
      pip:
       name: PyWavelets
+      extra_args: --user
 
    - name: Installing ipdb
      pip:
       name: ipdb
+      extra_args: --user
 
   #  - name: Installing OpenCV Python
   #    pip:
@@ -28,13 +29,16 @@
    - name: Installing Tensorflow 2 GPU
      pip:
       name: tensorflow-gpu
+      extra_args: --user
 
    - name: Installing Matplotlib
      pip:
       name: matplotlib
+      extra_args: --user
 
    - name: Installing tensorflow-datasets
      pip:
       name: tensorflow-datasets
+      extra_args: --user
 
       
