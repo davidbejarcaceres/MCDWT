@@ -1,0 +1,32 @@
+# Install all python modules with pip3
+
+---
+
+- name: Installing all python packages with pip3
+  gather_facts: false
+  hosts: localhost
+  user: nvidia
+  tasks:
+   - name: Installing numpy
+     pip:
+      name: numpy
+
+   - name: Installing PyWavelets
+     pip:
+      name: PyWavelets
+
+   - name: Installing ipdb
+     pip:
+      name: ipdb
+
+   - name: Installing OpenCV Python
+     pip:
+      name: opencv-python
+
+   - name: Installing Tensorflow 2 GPU
+     pip:
+      name: tensorflow-gpu
+
+
+
+      
