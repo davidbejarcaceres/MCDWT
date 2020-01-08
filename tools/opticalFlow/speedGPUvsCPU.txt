@@ -1,0 +1,6 @@
+python3.6 cpu-opt_flow.py
+total time in optical flow CPU processing: 265.0226 sec, for: 794 frames. FPS: 3.00
+
+
+python3.6 gpu-opt_flow.py:
+total time in optical flow GPU processing: 119.0128 sec, for: 794 frames. FPS: 6.67

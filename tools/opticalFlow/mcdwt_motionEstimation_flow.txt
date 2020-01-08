@@ -1,0 +1,30 @@
+MCDWT.py imports predictor from simple_average.py or weight_average.py (predictor.enerate prediction())
+
+Predictor imports motion_estimation from /optical/motion.py to calculate opticalFlow
+
+motion.py (Line 8) ---> simple_average.py/weight_average.py  ---> MCDWT (Line 44)
+
+images in MCDWT are using dtype="float64" and shape 2D (GrayScale)
+
+##### Generating Optical Flow MCDWT #####
+
+def motion_estimation(curr, next):
+    curr_y, _, _ = cv2.split(curr)
+    next_y, _, _ = cv2.split(next)
+
+Gets current and next frames with 3 colors BGR (OpenCV reads images as bgr not RGB)
+calls cv2.split functions to devide the 3 color channels, so curr_y and next_y will have the R B channels
+
+### acelerate performance ###
+ - OpenCV considers split costly operation (in terms of time). So do it only if you need it. Otherwise go for Numpy indexing.
+
+ so instead of using cv2.split(curr) should be better to use 
+ b = img[:,:,0]
+ g = img[:,:,1]
+ r = img[:,:,2]
+
+ - cv.cvtcolor is not demanding so moving it to GPU is not relevant
+
+ 
+
+

@@ -11,6 +11,8 @@
 import numpy as np
 import subprocess
 import argparse
+import os
+tempPath = tempfile.gettempdir() + os.path.sep
 
 
 def main():
@@ -29,7 +31,7 @@ def main():
     if args.i != None:
         inputPath = args.i
     else:
-        inputPath = "/tmp/"
+        inputPath = tempPath
 
     # If needs to add .png extension
     if args.addextension != None:
