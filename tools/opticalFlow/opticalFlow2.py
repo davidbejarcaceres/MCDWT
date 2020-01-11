@@ -52,9 +52,20 @@ while(vc.isOpened()):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.resize(gray, None, fx=scale, fy=scale)
 
+
+    ##############################
+
+
+    ##############################
+
     # Calculate dense optical flow by Farneback method
     # https://docs.opencv.org/3.0-beta/modules/video/doc/motion_analysis_and_object_tracking.html#calcopticalflowfarneback
     flow = cv2.calcOpticalFlowFarneback(prev_gray, gray, None, pyr_scale = 0.5, levels = 5, winsize = 11, iterations = 5, poly_n = 5, poly_sigma = 1.1, flags = 0)
+
+    if cuda_enabled:
+        flow = opticalFlowCuda(prevgray, gray)
+    else:
+        flow = cv2.calcOpticalFlowFarneback(prev_gray, gray, None, pyr_scale = 0.5, levels = 5, winsize = 11, iterations = 5, poly_n = 5, poly_sigma = 1.1, flags = 0)
     # Compute the magnitude and angle of the 2D vectors
     magnitude, angle = cv2.cartToPolar(flow[..., 0], flow[..., 1])
     # Set image hue according to the optical flow direction
