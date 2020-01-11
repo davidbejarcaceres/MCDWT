@@ -85,9 +85,7 @@ def main():
     show_hsv = False
     show_glitch = False
     cur_glitch = prev.copy()
-    # fps = int(cam.get(cv.CAP_PROP_FPS))
-
-    opticalFlowGPUCalculator = cv.cuda_FarnebackOpticalFlow.create(5, 0.5, False, 15, 3, 5, 1.2, 0)
+    
     frames = 0
 
     while(cam.isOpened()):
