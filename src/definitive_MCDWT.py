@@ -3,11 +3,11 @@
 import numpy as np
 import sys
 import tempfile
-tempDir = tempfile.gettempdir()
+import os
+tempDir = tempfile.gettempdir() + os.sepq
 from DWT import DWT
 sys.path.insert(0, "..")
 from IO import decomposition
-import os
 from MDWT import MDWT
 
 
