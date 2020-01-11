@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import os
 import tempfile
-tempDir = tempfile.gettempdir()
+tempDir = tempfile.gettempdir() + os.sep
 
 class InputFileException(Exception):
     pass

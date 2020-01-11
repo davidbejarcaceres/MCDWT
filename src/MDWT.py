@@ -12,7 +12,7 @@ projectPathOS = sys.path[0].replace("/tools", "") if sys.platform == "linux" els
 sys.path.append(projectPathOS)
 sys.path.append(os.getcwd())
 import tempfile
-tempDir = tempfile.gettempdir()
+tempDir = tempfile.gettempdir() os.sep
 from DWT import DWT
 sys.path.insert(0, "..")
 from src.IO import image

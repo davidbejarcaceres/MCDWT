@@ -19,7 +19,7 @@ projectPathOS = sys.path[0].replace("/tools", "") if sys.platform == "linux" els
 sys.path.append(projectPathOS)
 sys.path.append(os.getcwd())
 import tempfile
-tempDir = tempfile.gettempdir()
+tempDir = tempfile.gettempdir() + os.sep
 from MDWT import MDWT
 from MCDWT import MCDWT
 sys.path.insert(0, "..")
@@ -42,16 +42,16 @@ if __name__ == "__main__":
         formatter_class=CustomFormatter)
 
     parser.add_argument("-i", "--images",
-                        help="Sequence of images", default=f"{tempDir + os.path.sep}stockholm{os.path.sep}")
+                        help="Sequence of images", default=f"{tempDir}stockholm{os.path.sep}")
 
     parser.add_argument("-d", "--decompositions",
-                        help="Sequence of decompositions", default=f"{tempDir + os.path.sep}stockholm_{os.path.sep}")
+                        help="Sequence of decompositions", default=f"{tempDir}stockholm_{os.path.sep}")
 
     parser.add_argument("-N",
                         help="Number of images/decompositions", default=5, type=int)
 
     parser.add_argument("-m", "--mc_decompositions",
-                        help="Sequence of motion compensated decompositions", default=f"{tempDir + os.path.sep}mc_stockholm_")
+                        help="Sequence of motion compensated decompositions", default=f"{tempDir}mc_stockholm_")
 
     parser.add_argument("-T",
                         help="Number of temporal levels", default=2, type=int)
@@ -75,6 +75,6 @@ if __name__ == "__main__":
         d = MCDWT(p.shape)
         p = d.forward(args.decompositions, args.decompositions, args.N, args.T)
 
-        path += '/LL/'
+        path += f"{os.sep}LL{os.sep}" # path += '/LL/'
         args.decompositions = path + os.path.basename(decompositions)
         args.images = args.decompositions
