@@ -15,12 +15,11 @@ except:
 
 def opticalFlowCuda(imgPrev, gray):
     ############  CUDA Optical Flow ###############
-    g_prev_gpu = cv.cuda_GpuMat(imgPrev)
-    g_next_gpu = cv.cuda_GpuMat(gray)
-    flowGPU = opticalFlowGPUCalculator.calc(g_prev_gpu, g_next_gpu, None)
-    flow = flowGPU.download()
+    g_prev_gpu = cv.cuda_GpuMat(imgPrev) # Alocates memory on GPU and moves data HOST->GPU
+    g_next_gpu = cv.cuda_GpuMat(gray) # Alocates memory on GPU and moves data HOST->GPU
+    flowGPU = opticalFlowGPUCalculator.calc(g_prev_gpu, g_next_gpu, None) # calculates optical flow on GPU
+    flow = flowGPU.download() # Moves back the opticalFlow from GPU->HOST
     ###############################################
-
     return flow
 
 # Get a VideoCapture object from video and store it in vs
@@ -58,14 +57,14 @@ while(vc.isOpened()):
 
     ##############################
 
-    # Calculate dense optical flow by Farneback method
-    # https://docs.opencv.org/3.0-beta/modules/video/doc/motion_analysis_and_object_tracking.html#calcopticalflowfarneback
-    flow = cv2.calcOpticalFlowFarneback(prev_gray, gray, None, pyr_scale = 0.5, levels = 5, winsize = 11, iterations = 5, poly_n = 5, poly_sigma = 1.1, flags = 0)
 
+    # Calculate dense optical flow by Farneback method
     if cuda_enabled:
         flow = opticalFlowCuda(prevgray, gray)
     else:
+        # https://docs.opencv.org/3.0-beta/modules/video/doc/motion_analysis_and_object_tracking.html#calcopticalflowfarneback
         flow = cv2.calcOpticalFlowFarneback(prev_gray, gray, None, pyr_scale = 0.5, levels = 5, winsize = 11, iterations = 5, poly_n = 5, poly_sigma = 1.1, flags = 0)
+    
     # Compute the magnitude and angle of the 2D vectors
     magnitude, angle = cv2.cartToPolar(flow[..., 0], flow[..., 1])
     # Set image hue according to the optical flow direction

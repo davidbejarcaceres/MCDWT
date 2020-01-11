@@ -30,9 +30,6 @@ except:
 
 
 
-# import video
-
-
 def draw_flow(img, flow, step=16):
     h, w = img.shape[:2]
     y, x = np.mgrid[step/2:h:step, step/2:w:step].reshape(2,-1).astype(int)
