@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import pywt
 #import matplotlib.pyplot as plt
+tempDir = tempfile.gettempdir() + os.sep
 
 filter = 'db5'
 
@@ -37,5 +38,5 @@ for c in range(3):
 #cv2.imshow('003', frame2[:,:,2]); cv2.waitKey(0); cv2.destroyAllWindows()
 print((frame==frame2).all())
 
-cv2.imwrite('/tmp/test_dwt_output.png',frame2)
+cv2.imwrite(f'{tempDir}test_dwt_output.png',frame2)
 

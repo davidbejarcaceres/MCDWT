@@ -39,7 +39,7 @@ def main():
 
 
 
-def substract_offset(input, output, offset=32768-128):
+def substract_offset(input: str, output: str, offset=32768-128):
     image = cv2.imread(input, -1)
 
     if image is None: 

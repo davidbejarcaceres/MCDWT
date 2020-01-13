@@ -73,4 +73,4 @@ if __name__ == "__main__":
 
     img = read(tempDir, "000")
     write(img, tempDir, "000")
-    print("IO::image:__main__: generated /tmp/000.png")
+    print(f"IO::image:__main__: generated {tempDir}000.png")

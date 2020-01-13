@@ -7,6 +7,10 @@ import argparse
 from cv2 import Sobel
 from skimage import data, draw, transform, util, color, filters
 import pylab
+import sys
+import os
+import tempfile
+tempPath = tempfile.gettempdir()
 
 
 
@@ -19,7 +23,7 @@ parser = argparse.ArgumentParser(description = "Displays information about an im
                                  formatter_class=CustomFormatter)
 
 parser.add_argument("-i", "--image",
-                    help="Input image", default="/tmp/stockholm/000")
+                    help="Input image", default=os.path.join(tempPath, "stockholm", "000.png"))
 
 args = parser.parse_args()
 
