@@ -2,7 +2,14 @@ import cv2
 import numpy as np
 import os
 import tempfile
+import shutil
+import sys
 tempDir = tempfile.gettempdir() + os.sep
+projectPathOS = os.getcwd()
+sys.path.append(projectPathOS)
+projectPathOS = projectPathOS.replace("/tools", "") if sys.platform == "linux" else projectPathOS.replace("\\tools", "")
+sys.path.append(projectPathOS)
+
 if __debug__:
     import time
 
@@ -235,14 +242,22 @@ def write(decomposition, prefix = tempDir, index = "000"):
     writeH(decomposition[1], prefix, index)
 
 if __name__ == "__main__":
-
     import os
-    os.system("cp ../../sequences/stockholm/000.png /tmp/LL000.png") # Use Python's call, not system's call
-    os.system("cp ../../sequences/stockholm/001.png /tmp/LH000.png")
-    os.system("cp ../../sequences/stockholm/002.png /tmp/HL000.png")
-    os.system("cp ../../sequences/stockholm/003.png /tmp/HH000.png")
+    stockholmImage1 = ("{}{}000.png".format( os.path.join(projectPathOS, "sequences", "stockholm") , os.sep ))
+    shutil.copy( stockholmImage1 , tempDir + "LL000.png")
+    stockholmImage2 = ("{}{}001.png".format( os.path.join(projectPathOS, "sequences", "stockholm") , os.sep ))
+    shutil.copy( stockholmImage2 , tempDir + "LH000.png")
+    stockholmImage3 = ("{}{}002.png".format( os.path.join(projectPathOS, "sequences", "stockholm") , os.sep ))
+    shutil.copy( stockholmImage3 , tempDir + "HL000.png")
+    stockholmImage4 = ("{}{}003.png".format( os.path.join(projectPathOS, "sequences", "stockholm") , os.sep ))
+    shutil.copy( stockholmImage4 , tempDir + "HH000.png")
+    
     pyr = read(tempDir, "000")
-    os.system("rm -rf /tmp/out/") # Use Python's call, not system's call
-    os.mkdir("/tmp/out/")
-    write(pyr, "/tmp/out/", "000")
-    print("IO::decomposition:__main__: generated decomposition /tmp/out/000")
+    if os.path.exists(tempDir + "out"):
+        shutil.rmtree(tempDir + "out")
+
+    os.makedirs(tempDir + "out", 755, 1)
+
+    write(pyr, (tempDir + "out" + os.sep), "000")
+    print("IO::decomposition:__main__: generated decomposition {}out{}000".format(tempDir, os.sep))
+    pass

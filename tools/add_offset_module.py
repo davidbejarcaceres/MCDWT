@@ -60,7 +60,7 @@ def add_offset(input, output, offset=32768-128):
 
     cv2.imwrite(output + ".png", image.astype(np.uint16))
     # Removes extension from 000.png.png to 000.png
-    shutil.move(output + ".png ", output)
+    shutil.move(output + ".png", output)
     pass
 
 
