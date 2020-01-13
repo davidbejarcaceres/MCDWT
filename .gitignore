@@ -10,3 +10,4 @@ src/MC/__pycache__/__init__.cpython-37.pyc
 src/__pycache__/DWT.cpython-37.pyc
 tools/__pycache__/add_offset_module.cpython-37.pyc
 tools/__pycache__/substract_offset_module.cpython-37.pyc
+.vscode/settings.json

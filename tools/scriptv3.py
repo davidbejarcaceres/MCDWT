@@ -28,7 +28,7 @@ import tempfile
 projectPathOS = sys.path[0].replace("/tools", "") if sys.platform == "linux" else sys.path[0].replace("\\tools", "")
 sys.path.append(projectPathOS)
 sys.path.insert(0, "..")
-pythonversion3OS = "python3" if sys.platform == "linux" else "python"
+pythonversion3OS = "python3.6" if sys.platform == "linux" else "python"
 tempPath = tempfile.gettempdir()
 import src.DWT
 import src.IO

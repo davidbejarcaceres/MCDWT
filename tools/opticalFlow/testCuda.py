@@ -10,14 +10,19 @@ from __future__ import print_function
 import numpy as np
 import cv2 as cv
 
+def hello_(saludo: str) -> str:
+    return "World"
+
 if cv.cuda.getCudaEnabledDeviceCount():
     gpusDisponibles: int  =cv.cuda.getCudaEnabledDeviceCount()
     print("GPUs Disponibles: " + str(gpusDisponibles))
 
 
+
 npMat = (np.random.random((128, 128, 3)) * 255).astype(np.uint8)
 cuMat = cv.cuda_GpuMat()
 cuMat.upload(npMat)
+
 
 
 # def test_cudaarithm_arithmetic(self):
@@ -28,6 +33,8 @@ cuMat1 = cv.cuda_GpuMat()
 cuMat2 = cv.cuda_GpuMat()
 cuMat1.upload(npMat1)
 cuMat2.upload(npMat2)
+print("Valor")
+
 
 
 # def test_cudabgsegm_existence(self):

@@ -67,6 +67,7 @@ def opticalFlowCuda(imgPrev, gray):
     ############  CUDA Optical Flow ###############
     g_prev_gpu = cv.cuda_GpuMat(imgPrev) # Uploads image to GPU
     g_next_gpu = cv.cuda_GpuMat(gray) # Uploads image to GPU
+    g_next_gpu = cv.cuda.cvtColor(g_next_gpu, cv.COLOR_BGR2GRAY)
     flowGPU = opticalFlowGPUCalculator.calc(g_prev_gpu, g_next_gpu, None)  # Calculate on GPU
     flow = flowGPU.download() # Copies the optical flow from GPU to Host
     ###############################################
@@ -90,7 +91,8 @@ def main():
 
     while(cam.isOpened()):
         _ret, img = cam.read()
-        gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        if not cuda_enabled:
+            gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
         
         if cuda_enabled:
             flow = opticalFlowCuda(prevgray, gray)
