@@ -13,11 +13,14 @@ import numpy as np
 import math
 import argparse
 import subprocess
+import os
+tempPath = tempfile.gettempdir() + os.sep
+pythonversion3OS = "python3" if sys.platform == "linux" else "python"
 
 # Creates the command line arguments
 parser = argparse.ArgumentParser("Calculates gain of an image calculating energies")
 parser.add_argument("-i", help="Image to calculate gain without extension example: 000", default = "000")
-parser.add_argument("-path", "--path", help="Dir where the files the I/O files are placed", default="/tmp/")                                
+parser.add_argument("-path", "--path", help="Dir where the files the I/O files are placed", default=tempPath)                                
 args = parser.parse_args() # Parses all the arguments
 # Lists with combinations of subbands
 bands = ["HH", "HL", "LH", "LL"]
@@ -27,7 +30,7 @@ bandsLH = ["HH", "HL", "LL"]
 bandsHL = ["HH", "LH", "LL"]
 
 # Applies the DWT forward transform
-subprocess.run("python3 -O ../src/DWT.py -i {} -p {}".format(args.i, args.path), shell=True, check=True)
+subprocess.run("{} -O ../src/DWT.py -i {} -p {}".format(pythonversion3OS, args.i, args.path), shell=True, check=True)
 
 image = cv2.imread((args.path+"000.png"), -1) 
 print("Image shape: ", image.shape)
@@ -43,6 +46,7 @@ image_black = image * 0
 
 # Black the images for every subband
 subprocess.run("mkdir -p {}gainCalc".format(args.path), shell=True) # locates the images before calculating the base
+# os.makedirs(os.path.join(args.path, gainCalc), 755, 1)
 
 imagesList = [image_black, image_black, image_black, img_bandHH]
 for i in range(len(bands)):
@@ -79,7 +83,7 @@ def calc_energy(input_image):
 
 # Calculates gains for each band
 for band in bands:
-    subprocess.run("python3 -O ../src/DWT.py -i {} -p {}gainCalc/uses{}/ -b".format(args.i, args.path, band), shell=True, check=True)
+    subprocess.run("{} -O ../src/DWT.py -i {} -p {}gainCalc/uses{}/ -b".format(pythonversion3OS, args.i, args.path, band), shell=True, check=True)
     base = cv2.imread((args.path+"gainCalc/uses{}/000.png".format(band)), -1)
     gain = calc_energy(img_reconstructed)/ calc_energy(base)
     print("Total gain with subband {}:  {}".format(band ,gain))
