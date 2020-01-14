@@ -106,7 +106,7 @@ def main():
         for image in range(int(nFrames)):
             inputImg = ("{}_{:03d}.png".format( os.path.join(tempPath, videoName, "extracted", videoName) ,image+1))
             outputImg = ("{}{:03d}.png".format( os.path.join(tempPath, videoName, "16bit") + os.path.sep ,image))
-            add_offset.add_offset(inputImg, outputImg);
+            add_offset.add_offset(inputImg, outputImg)
 
         # delete extensions from 16 bit images
         # for image in range(int(nFrames)):
@@ -169,7 +169,7 @@ def main():
         for image in range(int(nFrames)):
             inputImg = ("{}{:03d}.png".format(os.path.join(tempPath, videoName, "16bit") + os.path.sep ,image))
             outputImg = ("{}{:03d}.png".format(os.path.join(tempPath, videoName, "reconstructed") + os.path.sep ,image))
-            substract_offset.substract_offset(inputImg, outputImg);
+            substract_offset.substract_offset(inputImg, outputImg)
 
     print("Check results on {} folder".format(os.path.join(tempPath, videoName)))
     print("\n\nScript Finished!")
