@@ -19,6 +19,15 @@ def main():
     cv.waitKey(0)
 
 
+def flowwiz():
+    OpticalFlowFile = "1_2.flo"
+    img = fz.convert_from_file(OpticalFlowFile)
+    cv.imshow('OPtical Flow loaded from ' + OpticalFlowFile, img)
+    cv.waitKey(0)
+
+    print("end")
+
+########### https://github.com/lmb-freiburg/flownet2/blob/master/scripts/run-flownet.py#L100-L115
 def readFlow(name):
     if name.endswith('.pfm') or name.endswith('.PFM'):
         return readPFM(name)[0][:,:,0:2]
@@ -35,8 +44,20 @@ def readFlow(name):
     flow = np.fromfile(f, np.float32, width * height * 2).reshape((height, width, 2))
 
     return flow.astype(np.float32)
+
+def writeFlow(name, flow):
+    f = open(name, 'wb')
+    f.write('PIEH'.encode('utf-8'))
+    np.array([flow.shape[1], flow.shape[0]], dtype=np.int32).tofile(f)
+    flow = flow.astype(np.float32)
+    flow.tofile(f)
+    f.flush()
+    f.close() 
     
 
+
+################# ERROR
+#################################### https://github.com/Johswald/flow-code-python
 def read(file: str) -> np.uint8:
 
 	assert type(file) is str, "file is not str %r" % str(file)
