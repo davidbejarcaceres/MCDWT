@@ -8,6 +8,7 @@ import numpy as np
 import cv2 as cv
 import sys
 import os
+import argparse
 thisPath = sys.path[0]
 filesPath = os.listdir(thisPath)
 
@@ -20,8 +21,28 @@ image2Path = os.path.join(thisPath, 'basketball2.png')
 
 
 def main():
-    frame1 = cv.imread(image1Path, cv.IMREAD_GRAYSCALE)
-    frame2 = cv.imread(image2Path, cv.IMREAD_GRAYSCALE)
+    parser = argparse.ArgumentParser(description = "Returns the ssim error of two images using OpenCV\n\n"
+                                 "Example:\n\n"
+                                 f"  ssim_error_Opencv -i {image1Path} -j {image2Path} \n")
+
+    parser.add_argument("-i", "--frame1",
+                        help="Input image 1", default=image1Path) #"../sequences/stockholm/000"
+
+    parser.add_argument("-j", "--frame2",
+                        help="Input image 2", default=image2Path)
+    args = parser.parse_args()
+
+    frame1 = cv.imread( args.frame1, cv.IMREAD_GRAYSCALE )
+    frame2 = cv.imread( args.frame2, cv.IMREAD_GRAYSCALE )
+    if frame1 is None:
+        print("ERROR: File not found:  " + args.frame1)
+        exit()
+
+    if frame2 is None:
+        print("ERROR: File not found:  " + args.frame2)
+        exit()
+
+        
     #ssim_scikit(frame1, frame2)
     ssim_scikit_GUI(frame1, frame2)
 

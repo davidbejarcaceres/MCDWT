@@ -4,15 +4,43 @@ import sys
 import os
 import tensorflow as tf
 from tensorflow.keras.backend import eval
+import argparse
+thisPath = sys.path[0]
+filesPath = os.listdir(thisPath)
 
+image1Path = os.path.join(thisPath, 'basketball1.png')
+image2Path = os.path.join(thisPath, 'basketball2.png')
 
 def main():
-    img1 = tf.io.decode_png( os.path.join(thisPath, 'basketball1.png'))
-    img2 = tf.io.decode_png( os.path.join(thisPath, 'basketball2.png'))
-    # imagen1 = tf.convert_to_tensor(frame1)
-    # imagen2 = tf.convert_to_tensor(frame2)
+    parser = argparse.ArgumentParser(description = "Returns the ssim error of two png images using Tensorflow Library\n\n"
+                                 "Example:\n\n"
+                                 f"  ssim_error_scikit -i {image1Path} -j {image2Path} \n")
 
-    get_ssim_tensorFlow(img1, img2)
+    parser.add_argument("-i", "--frame1",
+                        help="Input image 1", default=image1Path) #"../sequences/stockholm/000"
+
+    parser.add_argument("-j", "--frame2",
+                        help="Input image 2", default=image2Path)
+    args = parser.parse_args()
+
+
+    frame1 = cv.imread( args.frame1 )
+    frame2 = cv.imread( args.frame2 )
+    if frame1 is None:
+        print("ERROR: File not found:  " + args.frame1)
+        exit()
+
+    if frame2 is None:
+        print("ERROR: File not found:  " + args.frame2)
+        exit()
+
+    img1 = tf.convert_to_tensor(frame1)
+    img2 = tf.convert_to_tensor(frame2)
+
+    error_ssim = get_ssim_tensorFlow(img1, img2)
+    
+    print("SSIM Error:")
+    print(eval(error_ssim))
 
     pass
 

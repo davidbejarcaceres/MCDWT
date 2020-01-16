@@ -5,6 +5,7 @@ import numpy as np
 import cv2 as cv
 import sys
 import os
+import argparse
 thisPath = sys.path[0]
 filesPath = os.listdir(thisPath)
 
@@ -14,16 +15,35 @@ cv.setNumThreads(N_threads)
 
 
 image1Path = os.path.join(thisPath, 'basketball1.png')
-image2Path = os.path.join(thisPath, 'basketball2.png')
+image2Path = os.path.join(thisPath, 'basketball22.png')
 
 def main():
-    frame1 = cv.imread( image1Path, cv.IMREAD_GRAYSCALE )
-    frame2 = cv.imread( image2Path, cv.IMREAD_GRAYSCALE )
-    ssim_opencv = get_ssim_openCV(frame1, frame2)
-    os.cpu_count()
-    
-    print("End")
+    parser = argparse.ArgumentParser(description = "Returns the ssim error of two images using OpenCV\n\n"
+                                 "Example:\n\n"
+                                 f"  ssim_error_Opencv -i {image1Path} -j {image2Path} \n")
 
+    parser.add_argument("-i", "--frame1",
+                        help="Input image 1", default=image1Path) #"../sequences/stockholm/000"
+
+    parser.add_argument("-j", "--frame2",
+                        help="Input image 2", default=image2Path)
+    args = parser.parse_args()
+
+    frame1 = cv.imread( args.frame1, cv.IMREAD_GRAYSCALE )
+    frame2 = cv.imread( args.frame2, cv.IMREAD_GRAYSCALE )
+    if frame1 is None:
+        print("ERROR: File not found:  " + args.frame1)
+        exit()
+
+    if frame2 is None:
+        print("ERROR: File not found:  " + args.frame2)
+        exit()
+
+    ssim_opencv = get_ssim_openCV(frame1, frame2)
+    print("SSIM Error: " + str(ssim_opencv))
+    
+
+# Can only accept gray images shape H x W x 2
 def get_ssim_openCV(frame1, frame2) -> int:
     cv.setNumThreads(os.cpu_count())
     C1 = 6.5025
