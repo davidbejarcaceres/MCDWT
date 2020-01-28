@@ -12,7 +12,6 @@ import os
 from time import time
 import timeit
 thisPath = sys.path[0]
-filesPath = os.listdir(thisPath)
 # Import Methods to calculate the ssim error
 from ssim_error_OpenCV import get_ssim_openCV
 from ssim_error_tensorflow import tf_ssim

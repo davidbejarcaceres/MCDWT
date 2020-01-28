@@ -1,4 +1,4 @@
-# Developed by Davud Bejar caceres
+# Developed by David Bejar caceres
 # Based on OpenCV C++ implementation: https://docs.opencv.org/2.4/doc/tutorials/gpu/gpu-basics-similarity/gpu-basics-similarity.html
 
 import numpy as np 
