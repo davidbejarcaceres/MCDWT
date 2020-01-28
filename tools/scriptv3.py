@@ -98,9 +98,19 @@ def main():
         if localVideo:
             shutil.copyfile(videoPath, os.path.join(tempPath, videoName, videoName+".mp4")) 
 
-        # Extracts the frames from video
-        print("\n\nExtracting images ...\n\n")
-        subprocess.run("ffmpeg -i {} -vframes {} {}_%03d.png".format(os.path.join(tempPath,videoName,videoName+".mp4"),  nFrames, os.path.join(tempPath,videoName,"extracted", videoName)), shell=True, check=True)
+        
+        # Extracts the frames from video using OpenCV
+        cap = cv2.VideoCapture(os.path.join(tempPath,videoName, videoName+".mp4"))
+        extracted = 0
+        while extracted < nFrames:
+            success, frame = cap.read()
+            salida = "{}{}{}_{:03d}".format(os.path.join(tempPath,videoName,"extracted"), os.sep, videoName , extracted+1)
+            cv2.imwrite("{}.png".format(salida), frame)   # save frame as JPEG file
+            success, frame = cap.read()
+            extracted += 1
+
+        # print("\n\nExtracting images ...\n\n")
+        # subprocess.run("ffmpeg -i {} -vframes {} {}_%03d.png".format(os.path.join(tempPath,videoName, videoName+".mp4"),  nFrames, os.path.join(tempPath,videoName,"extracted", videoName)), shell=True, check=True)
 
         # Convert the images to 16 bit
         for image in range(int(nFrames)):
