@@ -44,7 +44,7 @@ def main():
     
 
 # Can only accept gray images shape H x W x 2
-def get_ssim_openCV(frame1, frame2) -> int:
+def get_ssim_openCV(frame1, frame2) -> float:
     cv.setNumThreads(os.cpu_count())
     C1 = 6.5025
     C2 = 58.5225
