@@ -26,15 +26,22 @@
   #    pip:
   #     name: opencv-python
 
+    - name: Installing tqdm
+    pip:
+      name: tqdm
+      extra_args: --user  
+
    - name: Installing Tensorflow 2 GPU
      pip:
       name: tensorflow-gpu
       extra_args: --user
-
+      
    - name: Installing Matplotlib
      pip:
       name: matplotlib
-      extra_args: --user
+      extra_args: --user    
+
+      
 
    - name: Installing tensorflow-datasets
      pip:
