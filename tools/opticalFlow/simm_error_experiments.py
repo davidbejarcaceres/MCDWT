@@ -1,3 +1,6 @@
+# Developed by: David Béjar Cáceres 2020
+# This script compares the real optical flow (ground thruth) against the farnerback optical flow
+
 import cv2 as cv
 import sys
 import os
