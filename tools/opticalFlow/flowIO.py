@@ -5,6 +5,8 @@ import sys
 thisPath = sys.path[0]
 filesPath = os.listdir(thisPath)
 import OpticalFlowToColor
+import flowiz as fz
+
 
 TAG_FLOAT = 202021.25
 TAG_STRING = 'PIEH'
