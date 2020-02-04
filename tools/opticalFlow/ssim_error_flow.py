@@ -16,15 +16,14 @@ try:
     cuMat1 = cv.cuda_GpuMat()
     opticalFlowGPUCalculator = cv.cuda_FarnebackOpticalFlow.create(10, 0.5, False, 15, 3, 5, 1.2, 0)
     cuda_enabled = True
-    pass
-finally:
-    pass
+except:
+  print("No CUDA support")
 
 # Benchmark parameters
 N_threads: int = os.cpu_count()
 cv.setNumThreads(N_threads)
 
-opticalFlowGPUCalculator = cv.cuda_FarnebackOpticalFlow.create(10, 0.5, False, 15, 3, 5, 1.2, 0)
+opticalFlowGPUCalculator =  cv.cuda_FarnebackOpticalFlow.create(10, 0.5, False, 15, 3, 5, 1.2, 0) if cuda_enabled else None
 
 
 
@@ -94,7 +93,7 @@ def error_ssim_compareReal_Fernerback(frame1Path, frame2Path, realFlowPath, show
     realFlow = readFlow(realFlowPath)
     realFlowColor = computeImg(realFlow)
 
-    flowFernerback = opticalFlowCuda(frame1, frame2)
+    flowFernerback = opticalFlowCuda(frame1, frame2) if  cuda_enabled else opticalFlowCPU(frame1, frame2)
     flowFernerbackColor = computeImg(flowFernerback)
     
 
