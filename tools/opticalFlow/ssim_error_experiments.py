@@ -56,13 +56,25 @@ def main():
             realFlowPath = os.path.join(flowDatasetRoot, "flow", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.flo')
 
             error = ssim_real_vs_farnerback(image_path1, image_path2, realFlowPath, show = False)
-            print("ERROR from bench: " + str(error))
+            print("SSIM from bench: " + str(error))
             resultados.write(  str(error) + "\n")
 
         resultados.close()
 
 
     return 0;
+
+def compareFlows_GUI():
+    for secuencia in range(0, len(secuencias)):
+        for n_frame in range(10, 11):
+            image_path1 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.png')
+            image_path2 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame+1:02d}.png')
+            realFlowPath = os.path.join(flowDatasetRoot, "flow", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.flo')
+
+            error = ssim_real_vs_farnerback(image_path1, image_path2, realFlowPath, show = True)
+            nomSecuencia = secuencias[secuencia].replace(".txt", "")
+            print("SSIM from sequence  " + nomSecuencia + ":  " + str(error))
+
 
 if __name__ == "__main__":
     main();
