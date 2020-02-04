@@ -25,7 +25,10 @@ alley2Flow = os.path.join(flowDatasetRoot, "flow", "alley_2") + os.sep
 shaman1Flow= os.path.join(flowDatasetRoot, "flow", "shaman_2") + os.sep
 
 secuencias: str = [
-
+    "alley_1.txt",
+    "alley_2.txt", # moving a lot
+    "shaman_2.txt",
+    "cave_2.txt", # moving a lot++
     "market_5.txt", # moving a lot
     "sleeping_1.txt",
     "temple_3.txt" # moving a lot
