@@ -27,7 +27,7 @@ shaman1Flow= os.path.join(flowDatasetRoot, "flow", "shaman_2") + os.sep
 secuencias: str = [
     "alley_1.txt",
     "alley_2.txt",
-    "shaman_1.txt",
+    "shaman_2.txt",
 ]
 
 def main():
