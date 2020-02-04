@@ -11,6 +11,15 @@ thisPath = sys.path[0]
 filesPath = os.listdir(thisPath)
 from readFlow2.readFlowFile import read as readFlow
 
+cuda_enabled = False
+try:
+    cuMat1 = cv.cuda_GpuMat()
+    opticalFlowGPUCalculator = cv.cuda_FarnebackOpticalFlow.create(10, 0.5, False, 15, 3, 5, 1.2, 0)
+    cuda_enabled = True
+    pass
+finally:
+    pass
+
 # Benchmark parameters
 N_threads: int = os.cpu_count()
 cv.setNumThreads(N_threads)
@@ -50,24 +59,27 @@ def main():
         print("ERROR: File not found:  " + args.frame2)
         exit()
 
+
     realFlow = readFlow(groundTruth)
     realFlowColor = computeImg(realFlow)
     print(realFlowColor.shape)
 
-    flowFernerback = opticalFlowCuda(frame1, frame2)
+    flowFernerback = opticalFlowCuda(frame1, frame2) if  cuda_enabled else opticalFlowCPU(frame1, frame2)
     flowFernerbackColor = computeImg(flowFernerback)
     
 
     ssim_opencv = get_ssim_openCV(flowFernerbackColor, realFlowColor)
+    error_MSE_numpy = np.square(np.subtract(flowFernerbackColor,realFlowColor)).mean()
 
-    showFlowSSIM(frame1, realFlowColor, flowFernerbackColor, ssim_opencv);
+
+    showFlowSSIM(frame1, realFlowColor, flowFernerbackColor, ssim_opencv, error_MSE_numpy);
 
     print("SSIM Error: " + str(ssim_opencv))
 
     return ssim_opencv;
 
 
-def error_ssim_compareReal_Fernerback(frame1Path, frame2Path, realFlowPath):
+def error_ssim_compareReal_Fernerback(frame1Path, frame2Path, realFlowPath, show = True):
     frame1 = cv.imread(frame1Path, cv.IMREAD_GRAYSCALE )
     frame2 = cv.imread(frame2Path, cv.IMREAD_GRAYSCALE )
 
@@ -81,7 +93,6 @@ def error_ssim_compareReal_Fernerback(frame1Path, frame2Path, realFlowPath):
     
     realFlow = readFlow(realFlowPath)
     realFlowColor = computeImg(realFlow)
-    print(realFlowColor.shape)
 
     flowFernerback = opticalFlowCuda(frame1, frame2)
     flowFernerbackColor = computeImg(flowFernerback)
@@ -89,14 +100,13 @@ def error_ssim_compareReal_Fernerback(frame1Path, frame2Path, realFlowPath):
 
     ssim_opencv = get_ssim_openCV(flowFernerbackColor, realFlowColor)
 
-    showFlowSSIM(frame1, realFlowColor, flowFernerbackColor, ssim_opencv);
+    error_MSE_numpy = np.square(np.subtract(flowFernerbackColor,realFlowColor)).mean()
 
-    print("SSIM Error: " + str(ssim_opencv))
+    if show:
+        showFlowSSIM(frame1, realFlowColor, flowFernerbackColor, ssim_opencv, error_MSE_numpy);
 
     return ssim_opencv;
     
-
-
 
 
 
@@ -120,7 +130,7 @@ def showPairImages(image1, image2, error):
 
     return 0;
 
-def showFlowSSIM(image1, realFlow, flowFernerbackColor, error):
+def showFlowSSIM(image1, realFlow, flowFernerbackColor, ssim_error, sme_error):
 
     fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(10, 4),
                              sharex=True, sharey=True)
@@ -133,14 +143,30 @@ def showFlowSSIM(image1, realFlow, flowFernerbackColor, error):
     ax[1].imshow(cv.cvtColor(realFlow, cv.COLOR_BGR2RGB))
     ax[1].set_title('Flujo óptico real')
 
-    ax[2].imshow(flowFernerbackColor)
-    ax[2].set_xlabel( "Error Similaridad Estrutal:  " + str(error) )
+    ax[2].imshow(cv.cvtColor(flowFernerbackColor, cv.COLOR_BGR2RGB))
+    ax[2].set_xlabel( "Error Similaridad Estrutal:  " + str(ssim_error) + "\n" + "Error Medio Cuadrado: " + str(np.around(sme_error, 3)) )
     ax[2].set_title('Flujo óptico conseguido')
 
     plt.tight_layout()
     plt.show()
 
     return 0;
+
+# https://docs.opencv.org/2.4/doc/tutorials/gpu/gpu-basics-similarity/gpu-basics-similarity.html
+def get_sme_openCV(image1, image2):
+    s1 = cv.absdiff(image1, image2);          
+    s1 = s1 * s1    
+
+    s = cv.sumElems(s1)   
+
+    sse = s[0] + s[1] + s[2];
+
+    if (sse <= 1e-10):
+        return 0;
+    else:
+        mse =sse /(image1.channels() * image1.size);
+        return mse;
+
 
 
 # Can only accept gray images shape H x W x 2
@@ -206,6 +232,8 @@ def opticalFlowCuda(imgPrev: np.uint8, gray: np.uint8):
     ###############################################
     return flow
 
+def opticalFlowCPU(imgPrev: np.uint8, gray: np.uint8):
+    return cv.calcOpticalFlowFarneback(imgPrev, gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
 
 def makeColorwheel():
 
