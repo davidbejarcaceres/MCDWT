@@ -11,7 +11,7 @@ from ssim_error_flow import error_ssim_compareReal_Fernerback as ssim_real_vs_fa
 
 
 cDrive = 'c:' + os.sep + "Users"
-thisPathWindows = os.path.join(cDrive, "Public", "opticalFlowTensor", "MPI-Sintel", "training")
+thisPathWindows = os.path.join(cDrive, "Aulas_Biblioteca","Documents" , "David", "tensorflowOpticalFlow", "MPI-Sintel", "training")
 flowDatasetRootLinux = os.sep + os.path.join("home", "nvidia", "tensorflowOpticalFlow", "MPI-Sintel", "training")
 
 flowDatasetRoot = flowDatasetRootLinux if sys.platform == "linux" else thisPathWindows
