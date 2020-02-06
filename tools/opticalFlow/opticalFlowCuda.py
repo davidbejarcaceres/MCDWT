@@ -10,7 +10,6 @@ frame1 = cv.imread( os.path.join(thisPath, 'basketball1.png'), cv.IMREAD_GRAYSCA
 frame2 = cv.imread( os.path.join(thisPath, 'basketball2.png'), cv.IMREAD_GRAYSCALE )
 
 nvof = cv.cuda_NvidiaOpticalFlow_1_0.create(frame1.shape[1], frame1.shape[0], 5, False, False, False, 1)
-# nvof = cv.cuda.NvidiaOpticalFlow_1_0_create(frame1.shape[1],frame1.shape[0])
 
 flow = nvof.calc(frame1, frame2, None)
 
