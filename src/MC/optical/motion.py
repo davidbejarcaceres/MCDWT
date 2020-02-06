@@ -49,10 +49,14 @@ def opticalFlowCuda(next_y: np.uint8, curr_y: np.uint8) -> cv2.UMat:
     if cuda_turing_aceleration_sdk:
         return opticalFlowCuda_testla(next_y, curr_y)
     ############  CUDA Optical Flow ###############
-    next_y_gpu: cv2.cuda_GpuMat = cv2.cuda_GpuMat(next_y) # Uploads image to GPU
-    curr_y_gpu: cv2.cuda_GpuMat = cv2.cuda_GpuMat(curr_y) # Uploads image to GPU
-    flowGPU: cv2.cuda_GpuMat = opticalFlowGPUCalculator.calc(next_y_gpu, curr_y_gpu, None)  # Calculate on GPU
-    flow:  cv2.UMat = flowGPU.download() # Copies the optical flow from GPU to Host
+    next_y_gpu = cv.cuda_GpuMat() # Allocates memory on GPU
+    curr_y_gpu = cv.cuda_GpuMat() # Allocates memory on GPU
+
+    next_y_gpu.upload(next_y) # Moves image to GPU allocated memory
+    curr_y_gpu.upload(curr_y_gpu) # Moves image to GPU allocated memory
+
+    flowGPU: cv2.cuda_GpuMat = opticalFlowGPUCalculator.calc(next_y_gpu, curr_y_gpu, None)
+    flow:  cv2.UMat = flowGPU.download() # Copies the optical flow from GPU memory to Host memory
     ###############################################
     return flow
 
