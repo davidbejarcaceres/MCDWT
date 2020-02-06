@@ -14,7 +14,7 @@ cDrive = 'c:' + os.sep + "Users"
 thisPathWindows = os.path.join(cDrive, "Public", "opticalFlowTensor", "MPI-Sintel", "training")
 flowDatasetRootLinux = os.sep + os.path.join("home", "nvidia", "tensorflowOpticalFlow", "MPI-Sintel", "training")
 
-flowDatasetRoot = flowDatasetRootLinux if sys.platform == "linux" else flowDatasetRootLinux
+flowDatasetRoot = flowDatasetRootLinux if sys.platform == "linux" else thisPathWindows
 
 alley1Images = os.path.join(flowDatasetRoot, "final", "alley_1") + os.sep
 alley2Images = os.path.join(flowDatasetRoot, "final", "alley_2") + os.sep
