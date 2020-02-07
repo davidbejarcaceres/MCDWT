@@ -32,7 +32,7 @@ def generate_prediction(curr, next, base):
 
 
 def motion_estimation(curr, next):
-    curr_y, _, _ = curr[:, :, 0]
+    curr_y = curr[:, :, 0]
     next_y = next[:, :, 0]
 
     return cv2.calcOpticalFlowFarneback(next_y, curr_y, None, 0.5, 3, 15, 3, 5, 1.2, 0) if cuda_enabled is False else opticalFlowCuda(next_y, curr_y)
@@ -53,8 +53,8 @@ def opticalFlowCuda(next_y: np.uint8, curr_y: np.uint8) -> cv2.UMat:
     if cuda_turing_aceleration_sdk:
         return opticalFlowCuda_testla(next_y, curr_y)
     ############  CUDA Optical Flow ###############
-    next_y_gpu = cv.cuda_GpuMat()  # Allocates memory on GPU
-    curr_y_gpu = cv.cuda_GpuMat()  # Allocates memory on GPU
+    next_y_gpu: cv2.cuda_GpuMat = cv.cuda_GpuMat()  # Allocates memory on GPU
+    curr_y_gpu: cv2.cuda_GpuMat = cv.cuda_GpuMat()  # Allocates memory on GPU
 
     next_y_gpu.upload(next_y)  # Moves image to GPU allocated memory
     curr_y_gpu.upload(curr_y_gpu)  # Moves image to GPU allocated memory
