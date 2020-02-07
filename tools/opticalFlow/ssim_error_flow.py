@@ -24,6 +24,7 @@ N_threads: int = os.cpu_count()
 cv.setNumThreads(N_threads)
 
 opticalFlowGPUCalculator =  cv.cuda_FarnebackOpticalFlow.create(10, 0.5, False, 15, 3, 5, 1.2, 0) if cuda_enabled else None
+opticalFlowDual_TVL1Calculator = cv.cuda_OpticalFlowDual_TVL1.create( 0.25,  0.25,  0.3,  5,  5,  0.01,  30,  0.8,  0.0,  False ) if cuda_enabled else None
 
 
 
@@ -94,6 +95,34 @@ def error_ssim_compareReal_Fernerback(frame1Path, frame2Path, realFlowPath, show
     realFlowColor = computeImg(realFlow)
 
     flowFernerback = opticalFlowCuda(frame1, frame2) if  cuda_enabled else opticalFlowCPU(frame1, frame2)
+    flowFernerbackColor = computeImg(flowFernerback)
+    
+
+    ssim_opencv = get_ssim_openCV(flowFernerbackColor, realFlowColor)
+
+    error_MSE_numpy = np.square(np.subtract(flowFernerbackColor,realFlowColor)).mean()
+
+    if show:
+        showFlowSSIM(frame1, realFlowColor, flowFernerbackColor, ssim_opencv, error_MSE_numpy);
+
+    return ssim_opencv;
+
+def error_ssim_compareReal_Dual_TVL1(frame1Path, frame2Path, realFlowPath, show = True):
+    frame1 = cv.imread(frame1Path, cv.IMREAD_GRAYSCALE )
+    frame2 = cv.imread(frame2Path, cv.IMREAD_GRAYSCALE )
+
+    if frame1 is None:
+        print("ERROR: File not found:  " + frame1)
+        exit()
+
+    if frame2 is None:
+        print("ERROR: File not found:  " + frame2)
+        exit()
+    
+    realFlow = readFlow(realFlowPath)
+    realFlowColor = computeImg(realFlow)
+
+    flowFernerback = opticalFlowCuda_Dual_TVL1(frame1, frame2) if  cuda_enabled else opticalFlowCPU(frame1, frame2)
     flowFernerbackColor = computeImg(flowFernerback)
     
 
@@ -227,6 +256,15 @@ def opticalFlowCuda(imgPrev: np.uint8, gray: np.uint8):
     g_prev_gpu = cv.cuda_GpuMat(imgPrev) # Uploads image to GPU
     g_next_gpu = cv.cuda_GpuMat(gray) # Uploads image to GPU
     flowGPU = opticalFlowGPUCalculator.calc(g_prev_gpu, g_next_gpu, None)  # Calculate on GPU
+    flow = flowGPU.download() # Copies the optical flow from GPU to Host
+    ###############################################
+    return flow
+
+def opticalFlowCuda_Dual_TVL1(imgPrev: np.uint8, gray: np.uint8):
+    ############  CUDA Optical Flow ###############
+    g_prev_gpu = cv.cuda_GpuMat(imgPrev) # Uploads image to GPU
+    g_next_gpu = cv.cuda_GpuMat(gray) # Uploads image to GPU
+    flowGPU = opticalFlowDual_TVL1Calculator.calc(g_prev_gpu, g_next_gpu, None)  # Calculate on GPU
     flow = flowGPU.download() # Copies the optical flow from GPU to Host
     ###############################################
     return flow

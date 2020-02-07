@@ -67,6 +67,18 @@ def getOpticalFlow(frame1, frame2) -> int:
 
 
 
+def opticalFlowCuda_Dual_TVL1(imgPrev: np.uint8, gray: np.uint8):
+    opticalFlowDual_TVL1Calculator = cv.cuda_OpticalFlowDual_TVL1.create( 0.25,  0.25,  0.3,  5,  5,  0.01,  30,  0.8,  0.0,  False )
+    ############  CUDA Optical Flow ###############
+    g_prev_gpu = cv.cuda_GpuMat(imgPrev) # Uploads image to GPU
+    g_next_gpu = cv.cuda_GpuMat(gray) # Uploads image to GPU
+    flowGPU = opticalFlowDual_TVL1Calculator.calc(g_prev_gpu, g_next_gpu, None)  # Calculate on GPU
+    flow = flowGPU.download() # Copies the optical flow from GPU to Host
+    ###############################################
+    return flow
+
+
+
 if __name__ == "__main__":
     main()
     pass

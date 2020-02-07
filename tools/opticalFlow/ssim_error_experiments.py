@@ -8,6 +8,8 @@ thisPath = sys.path[0]
 filesPath = os.listdir(thisPath)
 import ssim_error_flow
 from ssim_error_flow import error_ssim_compareReal_Fernerback as ssim_real_vs_farnerback
+from ssim_error_flow import error_ssim_compareReal_Dual_TVL1 as ssim_real_vs_Dual_TVL1
+
 
 
 cDrive = 'c:' + os.sep + "Users"
@@ -72,6 +74,18 @@ def compareFlows_GUI():
             realFlowPath = os.path.join(flowDatasetRoot, "flow", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.flo')
 
             error = ssim_real_vs_farnerback(image_path1, image_path2, realFlowPath, show = True)
+            nomSecuencia = secuencias[secuencia].replace(".txt", "")
+            print("SSIM from sequence  " + nomSecuencia + ":  " + str(error))
+
+
+def compareFlows_GUI_Dual_TVL1():
+    for secuencia in range(0, len(secuencias)):
+        for n_frame in range(10, 11):
+            image_path1 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.png')
+            image_path2 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame+1:02d}.png')
+            realFlowPath = os.path.join(flowDatasetRoot, "flow", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.flo')
+
+            error = ssim_real_vs_Dual_TVL1(image_path1, image_path2, realFlowPath, show = True)
             nomSecuencia = secuencias[secuencia].replace(".txt", "")
             print("SSIM from sequence  " + nomSecuencia + ":  " + str(error))
 
