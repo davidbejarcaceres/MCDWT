@@ -37,6 +37,17 @@ secuencias: str = [
 
 ]
 
+secuenciasDualTV1: str = [
+    "dualTV1_alley_1.txt",
+    "dualTV1_alley_2.txt", # moving a lot
+    "dualTV1_shaman_2.txt",
+    "dualTV1_cave_2.txt", # moving a lot++
+    "dualTV1_market_5.txt", # moving a lot
+    "dualTV1_sleeping_1.txt",
+    "dualTV1_temple_3.txt" # moving a lot
+
+]
+
 def main():
     print(alley1Images)
     print(alley2Images)
@@ -47,28 +58,65 @@ def main():
     print(alley2Flow)
     print(shaman1Flow)
 
+    print(" -------------------- ")
+
+    farnerback(nFrames=50)
+    DualTV1(nFrames=50)
+
     # error = ssim_real_vs_farnerback(f'{shaman1Images}frame_0005.png', f'{shaman1Images}frame_0006.png', f'{shaman1Flow}frame_0005.flo', show = True)
     # print("ERROR from bench: " + str(error))
 
+
+    return 0;
+
+
+def farnerback(nFrames=5):
+    if nFrames > 50:
+        nFrames = 50
+    print("Running experiments using Farnerback Method")
     for secuencia in range(0, len(secuencias)):
         resultados = open(f"ssim_error_{secuencias[secuencia]}", mode="w")
-        for n_frame in range(1, 50):
+        resultadosMSE = open(f"mse_error_{secuencias[secuencia]}", mode="w")
+        for n_frame in range(1, nFrames):
             image_path1 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.png')
             image_path2 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame+1:02d}.png')
             realFlowPath = os.path.join(flowDatasetRoot, "flow", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.flo')
 
             error = ssim_real_vs_farnerback(image_path1, image_path2, realFlowPath, show = False)
-            print("SSIM from bench: " + str(error))
-            resultados.write(  str(error) + "\n")
+            print("SSIM error: " + str(error[0]))
+            print("MSE error: " + str(error[1]))
+            resultados.write(  str(error[0]) + "\n")
+            resultadosMSE.write(  str(error[1]) + "\n")
 
         resultados.close()
+    return 0
 
-
-    return 0;
-
-def compareFlows_GUI():
+def DualTV1(nFrames=5):
+    if nFrames > 50:
+        nFrames = 50
+    print("Running experiments using DualTVL1 method")
     for secuencia in range(0, len(secuencias)):
-        for n_frame in range(10, 11):
+        resultados = open(f"ssim_error_{secuenciasDualTV1[secuencia]}", mode="w")
+        resultadosMSE = open(f"mse_error_{secuenciasDualTV1[secuencia]}", mode="w")
+        for n_frame in range(1, nFrames):
+            image_path1 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.png')
+            image_path2 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame+1:02d}.png')
+            realFlowPath = os.path.join(flowDatasetRoot, "flow", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.flo')
+
+            error = ssim_real_vs_Dual_TVL1(image_path1, image_path2, realFlowPath, show = False)
+            print("SSIM error: " + str(error[0]))
+            print("MSE error: " + str(error[1]))
+            resultados.write(  str(error[0]) + "\n")
+            resultadosMSE.write(  str(error[1]) + "\n")
+
+        resultados.close()
+    return 0
+
+def compareFlows_GUI(nFrames=5):
+    if nFrames > 50:
+        nFrames = 50
+    for secuencia in range(0, len(secuencias)):
+        for n_frame in range(1, nFrames):
             image_path1 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.png')
             image_path2 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame+1:02d}.png')
             realFlowPath = os.path.join(flowDatasetRoot, "flow", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.flo')
@@ -78,9 +126,11 @@ def compareFlows_GUI():
             print("SSIM from sequence  " + nomSecuencia + ":  " + str(error))
 
 
-def compareFlows_GUI_Dual_TVL1():
+def compareFlows_GUI_Dual_TVL1(nFrames=5):
+    if nFrames > 50:
+        nFrames = 50
     for secuencia in range(0, len(secuencias)):
-        for n_frame in range(10, 11):
+        for n_frame in range(1, nFrames):
             image_path1 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.png')
             image_path2 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame+1:02d}.png')
             realFlowPath = os.path.join(flowDatasetRoot, "flow", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.flo')

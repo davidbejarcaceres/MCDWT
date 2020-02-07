@@ -79,7 +79,7 @@ def main():
     return ssim_opencv;
 
 
-def error_ssim_compareReal_Fernerback(frame1Path, frame2Path, realFlowPath, show = True):
+def error_ssim_compareReal_Fernerback(frame1Path, frame2Path, realFlowPath, show = True) -> tuple:
     frame1 = cv.imread(frame1Path, cv.IMREAD_GRAYSCALE )
     frame2 = cv.imread(frame2Path, cv.IMREAD_GRAYSCALE )
 
@@ -105,7 +105,7 @@ def error_ssim_compareReal_Fernerback(frame1Path, frame2Path, realFlowPath, show
     if show:
         showFlowSSIM(frame1, realFlowColor, flowFernerbackColor, ssim_opencv, error_MSE_numpy);
 
-    return ssim_opencv;
+    return (ssim_opencv, error_MSE_numpy);
 
 def error_ssim_compareReal_Dual_TVL1(frame1Path, frame2Path, realFlowPath, show = True):
     frame1 = cv.imread(frame1Path, cv.IMREAD_GRAYSCALE )
@@ -133,7 +133,7 @@ def error_ssim_compareReal_Dual_TVL1(frame1Path, frame2Path, realFlowPath, show 
     if show:
         showFlowSSIM(frame1, realFlowColor, flowFernerbackColor, ssim_opencv, error_MSE_numpy);
 
-    return ssim_opencv;
+    return (ssim_opencv, error_MSE_numpy);
     
 
 
