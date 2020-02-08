@@ -5,9 +5,12 @@ cuda_enabled = False
 cuda_turing_aceleration_sdk = False
 
 try:
-    cuMat1 = cv2.cuda_GpuMat()
+    # Check if can allocates memory on the GPU
+    cuMat1: cv2.cuda_GpuMat = cv2.cuda_GpuMat()
+    # Checks if python wrappers for OpenCV is accessible from Python
     opticalFlowGPUCalculator = cv2.cuda_FarnebackOpticalFlow.create(
         10, 0.5, False, 15, 3, 5, 1.2, 0)
+    # If no error is shown, activates the CUDA functionality
     cuda_enabled = True
 except:
     print("No CUDA support")
