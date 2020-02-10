@@ -13,7 +13,8 @@ from ssim_error_flow import error_ssim_compareReal_Dual_TVL1 as ssim_real_vs_Dua
 
 
 cDrive = 'c:' + os.sep + "Users"
-thisPathWindows = os.path.join(cDrive, "Aulas_Biblioteca","Documents" , "David", "tensorflowOpticalFlow", "MPI-Sintel", "training")
+# thisPathWindows = os.path.join(cDrive, "Aulas_Biblioteca","Documents" , "David", "tensorflowOpticalFlow", "MPI-Sintel", "training")
+thisPathWindows = os.path.join(cDrive, "Public", "opticalFlowTensor", "MPI-Sintel", "training")
 flowDatasetRootLinux = os.sep + os.path.join("home", "nvidia", "tensorflowOpticalFlow", "MPI-Sintel", "training")
 
 flowDatasetRoot = flowDatasetRootLinux if sys.platform == "linux" else thisPathWindows
@@ -82,7 +83,7 @@ def farnerback(nFrames=5):
             image_path2 = os.path.join(flowDatasetRoot, "final", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame+1:02d}.png')
             realFlowPath = os.path.join(flowDatasetRoot, "flow", secuencias[secuencia].replace(".txt", ""), f'frame_00{n_frame:02d}.flo')
 
-            error = ssim_real_vs_farnerback(image_path1, image_path2, realFlowPath, show = False)
+            error = ssim_real_vs_farnerback(image_path1, image_path2, realFlowPath, show = True)
             print("SSIM error: " + str(error[0]))
             print("MSE error: " + str(error[1]))
             resultados.write(  str(error[0]) + "\n")
@@ -112,7 +113,8 @@ def DualTV1(nFrames=5):
         resultados.close()
     return 0
 
-def compareFlows_GUI(nFrames=5):
+
+def compareFlows_GUI_Farneback(nFrames=5):
     if nFrames > 50:
         nFrames = 50
     for secuencia in range(0, len(secuencias)):

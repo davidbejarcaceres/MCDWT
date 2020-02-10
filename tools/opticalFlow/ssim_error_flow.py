@@ -66,6 +66,9 @@ def main():
 
     flowFernerback = opticalFlowCuda(frame1, frame2) if  cuda_enabled else opticalFlowCPU(frame1, frame2)
     flowFernerbackColor = computeImg(flowFernerback)
+
+    dualTVL1 = opticalFlowCuda_Dual_TVL1(frame1, frame2) if  cuda_enabled else opticalFlowCPU_DUALTVL1(frame1, frame2)
+    dualTVL1Color = computeImg(dualTVL1)
     
 
     ssim_opencv = get_ssim_openCV(flowFernerbackColor, realFlowColor)
@@ -122,16 +125,16 @@ def error_ssim_compareReal_Dual_TVL1(frame1Path, frame2Path, realFlowPath, show 
     realFlow = readFlow(realFlowPath)
     realFlowColor = computeImg(realFlow)
 
-    flowFernerback = opticalFlowCuda_Dual_TVL1(frame1, frame2) if  cuda_enabled else opticalFlowCPU(frame1, frame2)
-    flowFernerbackColor = computeImg(flowFernerback)
-    
+    dualTVL1 = opticalFlowCuda_Dual_TVL1(frame1, frame2) if  cuda_enabled else opticalFlowCPU_DUALTVL1(frame1, frame2)
+    dualTVL1Color = computeImg(dualTVL1)
 
-    ssim_opencv = get_ssim_openCV(flowFernerbackColor, realFlowColor)
 
-    error_MSE_numpy = np.square(np.subtract(flowFernerbackColor,realFlowColor)).mean()
+    ssim_opencv = get_ssim_openCV(dualTVL1Color, realFlowColor)
+
+    error_MSE_numpy = np.square(np.subtract(dualTVL1Color,realFlowColor)).mean()
 
     if show:
-        showFlowSSIM(frame1, realFlowColor, flowFernerbackColor, ssim_opencv, error_MSE_numpy);
+        showFlowSSIM(frame1, realFlowColor, dualTVL1Color, ssim_opencv, error_MSE_numpy);
 
     return (ssim_opencv, error_MSE_numpy);
     
@@ -271,6 +274,10 @@ def opticalFlowCuda_Dual_TVL1(imgPrev: np.uint8, gray: np.uint8):
 
 def opticalFlowCPU(imgPrev: np.uint8, gray: np.uint8):
     return cv.calcOpticalFlowFarneback(imgPrev, gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+
+def opticalFlowCPU_DUALTVL1(imgPrev: np.uint8, gray: np.uint8):
+    optical_flow = cv.optflow.DualTVL1OpticalFlow_create()
+    return optical_flow.calc(imgPrev, gray, None)
 
 def makeColorwheel():
 
